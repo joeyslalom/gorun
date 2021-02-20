@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -27,13 +26,22 @@ func main() {
 	}
 }
 
+func fileExists(name string) bool {
+	_, err := os.Stat(name)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
 func scriptFilename(url string) string {
 	filename := url + ".sh"
-	_, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return "script.sh"
+	if fileExists(filename) {
+		return filename
 	}
-	return filename
+	return "script.sh"
 }
 
 func scriptHandler(w http.ResponseWriter, r *http.Request) {

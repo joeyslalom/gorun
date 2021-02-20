@@ -21,6 +21,9 @@ RUN go build -mod=readonly -v -o server
 
 # https://github.com/GoogleCloudPlatform/cloud-sdk-docker
 FROM gcr.io/google.com/cloudsdktool/cloud-sdk:328.0.0
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /app/server
